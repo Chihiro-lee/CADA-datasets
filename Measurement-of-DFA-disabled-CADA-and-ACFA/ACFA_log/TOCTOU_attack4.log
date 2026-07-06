@@ -1,0 +1,422 @@
+---- Iteration 0 ----
+cur chal: b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+
+---- (3) Reading ACFA Report from Prv ----
+prv_mac: b' \xc9\xa1\xac\x9a\x80x\xaa\xa6\xde\x86\x85\x97;\xda\xdb\n\x08H0\x99\x90\xb4\xb2]?\xb8c|\xe4\t\xd9' (<class 'bytes'>)
+prv_meta: b'\x00\x00\x00\x00\x02\x00' (<class 'bytes'>)
+metadata: [b'\x00', b'\x00', b'\x00', b'\x00', b'\x02', b'\x00']
+prv_log_ptr: 2 (<class 'int'>)
+prv_cflog: b'@\xe0\x00\xa0' (<class 'bytes'>)
+4
+4
+----- parsing message: create 0.cflog -----
+4
+2
+e040:a000
+
+---- (4) Verify ACFA Report ----
+-- Comparing MACs
+-- hmac(k,
+--      pmem,
+--      chal,
+--      metadata,
+--      cflog
+--      )
+Expected MAC: b' \xc9\xa1\xac\x9a\x80x\xaa\xa6\xde\x86\x85\x97;\xda\xdb\n\x08H0\x99\x90\xb4\xb2]?\xb8c|\xe4\t\xd9'
+mac   prv_mac
+b' '   b' '
+b'\xc9'   b'\xc9'
+b'\xa1'   b'\xa1'
+b'\xac'   b'\xac'
+b'\x9a'   b'\x9a'
+b'\x80'   b'\x80'
+b'x'   b'x'
+b'\xaa'   b'\xaa'
+b'\xa6'   b'\xa6'
+b'\xde'   b'\xde'
+b'\x86'   b'\x86'
+b'\x85'   b'\x85'
+b'\x97'   b'\x97'
+b';'   b';'
+b'\xda'   b'\xda'
+b'\xdb'   b'\xdb'
+b'\n'   b'\n'
+b'\x08'   b'\x08'
+b'H'   b'H'
+b'0'   b'0'
+b'\x99'   b'\x99'
+b'\x90'   b'\x90'
+b'\xb4'   b'\xb4'
+b'\xb2'   b'\xb2'
+b']'   b']'
+b'?'   b'?'
+b'\xb8'   b'\xb8'
+b'c'   b'c'
+b'|'   b'|'
+b'\xe4'   b'\xe4'
+b'\t'   b'\t'
+b'\xd9'   b'\xd9'
+Pass Verification (app=1)
+---- (5) Generate Chal' and Auth ----
+
+---- (6) Send ACFA response ----
+echo (app): b'\x01'
+new_chal: b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+echo (prv_chal): 
+b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+echo (aermin): b'\xe0\x00' (<class 'bytes'>)
+expected (aermin) b'\xe0\x00'
+
+echo (aermax): b'\xe2J' (<class 'bytes'>)
+expected (aermax) b'\xe2J'
+
+auth: b"\xb3\x86:\xea\xb2\x0b\xcf?ne%\xa3;+`whj7\t):\x81\xeb'\x99UGX\xc3;D"
+echo (auth): b"\xb3\x86:\xea\xb2\x0b\xcf?ne%\xa3;+`whj7\t):\x81\xeb'\x99UGX\xc3;D" (<class 'bytes'>)
+expected (auth) b"\xb3\x86:\xea\xb2\x0b\xcf?ne%\xa3;+`whj7\t):\x81\xeb'\x99UGX\xc3;D"
+
+prv auth: 
+b"\xb3\x86:\xea\xb2\x0b\xcf?ne%\xa3;+`whj7\t):\x81\xeb'\x99UGX\xc3;D" (<class 'bytes'>)
+Prv ACCEPTS response from Vrf
+out: b'\x01'
+echo old (*(CHAL_BASE)): b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' (<class 'bytes'>)
+
+echo (*(CHAL_BASE)): b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+expected (*(CHAL_BASE)): b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+echo (pmem[0:15]): b'UB \x015\xd0\x08Z\x82E\x00\x181@\x00h' (<class 'bytes'>)
+
+------------------- ROUND TIMING (S) ---------------------------
+Steps 1-3:	Receive initial response (P --> V): 0.04817491699941456
+   Step 4:	Vrf runs verification: 0.01706724399991799
+		--Parse & verify CF-Log: 0.016902201999982935
+		--Verify hmac: 0.00016504199993505608
+   Step 5:	Vrf Generate & response : 2.299799962202087e-05
+   Step 6:	Vrf Send response (V --> P): 0.20658925199950318
+Steps 7-9:	Prv authenticate and decide next action: 0.09621282899934158
+Elapsed time: 0.27185441099845775
+last=False
+----------------------------------------------------------------
+ 
+---- Iteration 1 ----
+cur chal: b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+
+---- (3) Reading ACFA Report from Prv ----
+prv_mac: b'\xb4\xa2]I\x07\xc8\xee\xc8\n\xb1\x9b\x16\xbb\x88\xc7{Q\x15&\xbf\x0f\xb5\xcd\xba\xf4B\xef\xa5@\xbb\xd2\xbb' (<class 'bytes'>)
+prv_meta: b'\x00\xe0J\xe2\x80\x00' (<class 'bytes'>)
+metadata: [b'\x00', b'\xe0', b'J', b'\xe2', b'\x80', b'\x00']
+prv_log_ptr: 128 (<class 'int'>)
+prv_cflog: b'\xfe\xdf@\xe0j\xe0\xe6\xe0\x12\xe1n\xe0\x86\xe0\x14\xe1<\xe1x\xe1\x80\xe1\x92\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8e\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x82\xe1\x88\xe1\x8a\xe1\x94\xe1\x96\xe1\x98\xe1\x9a\xe1\xa2\xe1@\xe1D\xe1\x8a\xe0\xa2\xe0F\xe1n\xe1\xa4\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xb6\xe1\x00\xa0' (<class 'bytes'>)
+256
+256
+----- parsing message: create 1.cflog -----
+256
+128
+dffe:e040
+e06a:e0e6
+e112:e06e
+e086:e114
+e13c:e178
+e180:e192
+e194:e182
+e188:e18e
+e194:e182
+e188:e18e
+e194:e182
+e188:e18a
+e194:e182
+e188:e18a
+e194:e182
+e188:e18a
+e194:e182
+e188:e18e
+e194:e182
+e188:e18a
+e194:e182
+e188:e18e
+e194:e182
+e188:e18a
+e194:e182
+e188:e18e
+e194:e182
+e188:e18e
+e194:e182
+e188:e18e
+e194:e182
+e188:e18e
+e194:e182
+e188:e18a
+e194:e182
+e188:e18a
+e194:e182
+e188:e18a
+e194:e196
+e198:e19a
+e1a2:e140
+e144:e08a
+e0a2:e146
+e16e:e1a4
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1b6:a000
+
+---- (4) Verify ACFA Report ----
+-- Comparing MACs
+-- hmac(k,
+--      pmem,
+--      chal,
+--      metadata,
+--      cflog
+--      )
+Expected MAC: b'\xb4\xa2]I\x07\xc8\xee\xc8\n\xb1\x9b\x16\xbb\x88\xc7{Q\x15&\xbf\x0f\xb5\xcd\xba\xf4B\xef\xa5@\xbb\xd2\xbb'
+mac   prv_mac
+b'\xb4'   b'\xb4'
+b'\xa2'   b'\xa2'
+b']'   b']'
+b'I'   b'I'
+b'\x07'   b'\x07'
+b'\xc8'   b'\xc8'
+b'\xee'   b'\xee'
+b'\xc8'   b'\xc8'
+b'\n'   b'\n'
+b'\xb1'   b'\xb1'
+b'\x9b'   b'\x9b'
+b'\x16'   b'\x16'
+b'\xbb'   b'\xbb'
+b'\x88'   b'\x88'
+b'\xc7'   b'\xc7'
+b'{'   b'{'
+b'Q'   b'Q'
+b'\x15'   b'\x15'
+b'&'   b'&'
+b'\xbf'   b'\xbf'
+b'\x0f'   b'\x0f'
+b'\xb5'   b'\xb5'
+b'\xcd'   b'\xcd'
+b'\xba'   b'\xba'
+b'\xf4'   b'\xf4'
+b'B'   b'B'
+b'\xef'   b'\xef'
+b'\xa5'   b'\xa5'
+b'@'   b'@'
+b'\xbb'   b'\xbb'
+b'\xd2'   b'\xd2'
+b'\xbb'   b'\xbb'
+Pass Verification (app=1)
+---- (5) Generate Chal' and Auth ----
+
+---- (6) Send ACFA response ----
+echo (app): b'\x01'
+new_chal: b'BBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+echo (prv_chal): 
+b'BBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+echo (aermin): b'\xe0\x00' (<class 'bytes'>)
+expected (aermin) b'\xe0\x00'
+
+echo (aermax): b'\xe2J' (<class 'bytes'>)
+expected (aermax) b'\xe2J'
+
+auth: b'\xd2\x16\xdf\xf9e\xd2$a\xfe\xb3w\x18\x0fw\xc1\xe8\xc2Y\xb7w\xdc,\xeb\xc5\x82\xf9\xd5]\xc5\xf8A9'
+echo (auth): b'\xd2\x16\xdf\xf9e\xd2$a\xfe\xb3w\x18\x0fw\xc1\xe8\xc2Y\xb7w\xdc,\xeb\xc5\x82\xf9\xd5]\xc5\xf8A9' (<class 'bytes'>)
+expected (auth) b'\xd2\x16\xdf\xf9e\xd2$a\xfe\xb3w\x18\x0fw\xc1\xe8\xc2Y\xb7w\xdc,\xeb\xc5\x82\xf9\xd5]\xc5\xf8A9'
+
+prv auth: 
+b'\xd2\x16\xdf\xf9e\xd2$a\xfe\xb3w\x18\x0fw\xc1\xe8\xc2Y\xb7w\xdc,\xeb\xc5\x82\xf9\xd5]\xc5\xf8A9' (<class 'bytes'>)
+Prv ACCEPTS response from Vrf
+out: b'\x01'
+echo old (*(CHAL_BASE)): b'ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+
+echo (*(CHAL_BASE)): b'BBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+expected (*(CHAL_BASE)): b'BBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+echo (pmem[0:15]): b'UB \x015\xd0\x08Z\x82E\x00\x181@\x00h' (<class 'bytes'>)
+
+------------------- ROUND TIMING (S) ---------------------------
+Steps 1-3:	Receive initial response (P --> V): 0.319887698000457
+   Step 4:	Vrf runs verification: 0.003632568000284664
+		--Parse & verify CF-Log: 0.003540785000041069
+		--Verify hmac: 9.178300024359487e-05
+   Step 5:	Vrf Generate & response : 1.2202000107208733e-05
+   Step 6:	Vrf Send response (V --> P): 0.2042816560006031
+Steps 7-9:	Prv authenticate and decide next action: 0.09609723100038536
+Elapsed time: 0.527814124001452
+last=False
+----------------------------------------------------------------
+ 
+---- Iteration 2 ----
+cur chal: b'BBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+
+---- (3) Reading ACFA Report from Prv ----
+prv_mac: b'\x9b\x153\xc0@t\x85\xea>Y\xc3\n\x7f\xde\xbb\xe7\xe7K\xce\xeb\xb1\x07\xa1\x1a\xdf\xb3\xd8)\x81^\x03N' (<class 'bytes'>)
+prv_meta: b'\x00\xe0J\xe2\x80\x00' (<class 'bytes'>)
+metadata: [b'\x00', b'\xe0', b'J', b'\xe2', b'\x80', b'\x00']
+prv_log_ptr: 128 (<class 'int'>)
+prv_cflog: b'\xfe\xdf\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc8\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc8\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xce\xe1\xd0\xe1\xb6\xe1\xc0\xe1\xc2\xe1\xc2\xe1\xc4\xe1\xc6\xe1\xc8\xe1\xd0\xe1\xb6\xe1\xba\xe1\x00\xa0' (<class 'bytes'>)
+256
+256
+----- parsing message: create 2.cflog -----
+256
+128
+dffe:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c8
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c8
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1ce
+e1d0:e1b6
+e1c0:e1c2
+e1c2:e1c4
+e1c6:e1c8
+e1d0:e1b6
+e1ba:a000
+
+---- (4) Verify ACFA Report ----
+-- Comparing MACs
+-- hmac(k,
+--      pmem,
+--      chal,
+--      metadata,
+--      cflog
+--      )
+Expected MAC: b'\x9b\x153\xc0@t\x85\xea>Y\xc3\n\x7f\xde\xbb\xe7\xe7K\xce\xeb\xb1\x07\xa1\x1a\xdf\xb3\xd8)\x81^\x03N'
+mac   prv_mac
+b'\x9b'   b'\x9b'
+b'\x15'   b'\x15'
+b'3'   b'3'
+b'\xc0'   b'\xc0'
+b'@'   b'@'
+b't'   b't'
+b'\x85'   b'\x85'
+b'\xea'   b'\xea'
+b'>'   b'>'
+b'Y'   b'Y'
+b'\xc3'   b'\xc3'
+b'\n'   b'\n'
+b'\x7f'   b'\x7f'
+b'\xde'   b'\xde'
+b'\xbb'   b'\xbb'
+b'\xe7'   b'\xe7'
+b'\xe7'   b'\xe7'
+b'K'   b'K'
+b'\xce'   b'\xce'
+b'\xeb'   b'\xeb'
+b'\xb1'   b'\xb1'
+b'\x07'   b'\x07'
+b'\xa1'   b'\xa1'
+b'\x1a'   b'\x1a'
+b'\xdf'   b'\xdf'
+b'\xb3'   b'\xb3'
+b'\xd8'   b'\xd8'
+b')'   b')'
+b'\x81'   b'\x81'
+b'^'   b'^'
+b'\x03'   b'\x03'
+b'N'   b'N'
+Pass Verification (app=1)
+---- (5) Generate Chal' and Auth ----
+
+---- (6) Send ACFA response ----
+echo (app): b'\x00'
+new_chal: b'CBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`'
+echo (prv_chal): 
+b'CBCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`' (<class 'bytes'>)
+echo (aermin): b'\xe0\x00' (<class 'bytes'>)
+expected (aermin) b'\xe0\x00'
+
+echo (aermax): b'\xe2J' (<class 'bytes'>)
+expected (aermax) b'\xe2J'
+
+auth: b'\xb9\xc3Y\xff|\x15>\xf0\xbcO1\xc8Kp\xec\\\xaf`\x13O\x13\xd5\xd0\xc5\x99\x8d\x8bi\xe0\xfb>l'
+echo (auth): b'\xb9\xc3Y\xff|\x15>\xf0\xbcO1\xc8Kp\xec\\\xaf`\x13O\x13\xd5\xd0\xc5\x99\x8d\x8bi\xe0\xfb>l' (<class 'bytes'>)
+expected (auth) b'\xb9\xc3Y\xff|\x15>\xf0\xbcO1\xc8Kp\xec\\\xaf`\x13O\x13\xd5\xd0\xc5\x99\x8d\x8bi\xe0\xfb>l'
+
+prv auth: 
+b'\xb9\xc3Y\xff|\x15>\xf0\xbcO1\xc8Kp\xec\\\xaf`\x13O\x13\xd5\xd0\xc5\x99\x8d\x8bi\xe0\xfb>l' (<class 'bytes'>)
+Prv ACCEPTS response from Vrf
+out: b'\x01'
+------------------- ROUND TIMING (S) ---------------------------
+Steps 1-3:	Receive initial response (P --> V): 0.3200422299996717
+   Step 4:	Vrf runs verification: 0.0008798400003797724
+		--Parse & verify CF-Log: 0.0007715850006206892
+		--Verify hmac: 0.00010825499975908315
+   Step 5:	Vrf Generate & response : 1.3793000107398257e-05
+   Step 6:	Vrf Send response (V --> P): 0.20660866100024577
+Steps 7-9:	Prv authenticate and decide next action: 0.09599433499988663
+Elapsed time: 0.5275445240004046
+last=False
+----------------------------------------------------------------
+ 
+--------------------------------------------------
+Average Protocol Run Time (3 reports)
+Round | Steps 1-3 | Step 4 | Step 5 | Step 6 | Step 7-9
+0   0.04817491699941456   0.01706724399991799   2.299799962202087e-05   0.20658925199950318   0.09621282899934158   
+1   0.319887698000457   0.003632568000284664   1.2202000107208733e-05   0.2042816560006031   0.09609723100038536   
+2   0.3200422299996717   0.0008798400003797724   1.3793000107398257e-05   0.20660866100024577   0.09599433499988663   
+--------------------------------------------------
+ 
