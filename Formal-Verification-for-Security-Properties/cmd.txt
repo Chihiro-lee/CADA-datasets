@@ -1,0 +1,8 @@
+−− To run it:
+−− shell > nuXmv −int cada_xxxx.smv
+−−
+−− At the nuXmv prompt issue
+following commands:
+−− go_msat; check_ltlspec_ic3 −i;
+quit
+−−

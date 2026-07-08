@@ -1,0 +1,216 @@
+MODULE main
+
+VAR
+  -- Memory models
+  PM   : array word[32] of word[32];
+  VM   : array word[32] of word[32];
+  MMIO : array word[32] of word[32];
+  mem_k : {_PM, _VM, _MMIO};
+  i     : word[32];
+  v     : word[32];
+
+  -- Execution context
+  exec_state : {prover, tcm, terminated};
+  prover_instrumented : boolean;
+
+  -- DMA control
+  dma_active : boolean;
+  dma_target_select : {target_mmio, target_adm, target_utdm, target_aim, target_zero};
+
+  -- Control-flow state machine
+  state : {s0, s1, s2, end};
+  PC : word[32];
+
+  -- Multi-faceted evidence variables
+  indirect_ctrl : boolean;
+  ctrl_flow_measured : boolean;
+  mem_write_measured : boolean;
+  mem_read_measured  : boolean;
+  measure_now : boolean;
+  mem_write_count : word[32];
+  mem_read_value  : word[32];
+
+  -- Evidence transmission
+  evidence_sent : boolean;
+  sent_through_hook : boolean;
+
+-- ============================================================================
+-- Address region definitions
+-- ============================================================================
+DEFINE
+  utc_b   := 0h32_00000010;
+  utc_e   := 0h32_00000100;
+  trampoline_b := 0h32_00000010;
+  trampoline_e := 0h32_00000040;
+  hook_b  := 0h32_00000050;
+  hook_e  := 0h32_00000080;
+
+  aim_b   := 0h32_00001000;
+  aim_e   := 0h32_00010000;
+  adm_b   := 0h32_00010000;
+  adm_e   := 0h32_00020000;
+
+  utdm_b  := 0h32_00000200;
+  utdm_e  := 0h32_00001000;
+
+  mmio_b  := 0h32_00000010;
+  mmio_e  := 0h32_00000100;
+
+  END_ADDR := 0h32_10000000;
+
+  in_prover_interval := (aim_b <= PC & PC <= aim_e);
+  in_prover_region := (aim_b <= i & i <= aim_e);
+  in_evidence := (utdm_b <= i & i <= utdm_e);
+  trampoline_call := in_prover_region & APx & EP;
+  prover_executing := (exec_state = prover) & APx;
+
+-- ============================================================================
+-- Access policies (from cada_read)
+-- ============================================================================
+DEFINE
+  APr :=
+    (mem_k = _PM  -> ((aim_b <= i & i <= aim_e) | (utc_b <= i & i <= utc_e))) &
+    (mem_k = _VM  -> (adm_b <= i & i <= adm_e) | (utdm_b <= i & i <= utdm_e)) &
+    (mem_k = _MMIO -> (mmio_b <= i & i <= mmio_e));
+
+  APw :=
+    (mem_k != _PM) &
+    case
+      mem_k = _VM   : (adm_b <= i & i <= adm_e) | 
+                      (exec_state = tcm & (utdm_b <= i & i <= utdm_e));
+      mem_k = _MMIO : (mmio_b <= i & i <= mmio_e);
+      TRUE          : FALSE;
+    esac;
+
+  APx :=
+    (mem_k = _PM) & ((aim_b <= i & i <= aim_e) | (utc_b <= i & i <= utc_e));
+
+  EP := (utc_b <= i & i <= utc_e);
+
+  -- Three types of evidence events
+  ctrl_event := in_prover_interval & indirect_ctrl;
+  prover_data_write := (mem_k = _VM) & (adm_b <= i & i <= adm_e) & APw;
+  prover_data_read  := (mem_k = _VM) & (adm_b <= i & i <= adm_e) & APr;
+
+-- ============================================================================
+-- State machine (from cada_goto)
+-- ============================================================================
+ASSIGN
+  init(state) := s0;
+  next(state) := case
+    state = s0 & APx : s1;
+    state = s1 & APx : s2;
+    state = s2 & APx : s2;
+    TRUE : end;
+  esac;
+
+  init(PC) := aim_b;
+  next(PC) := case
+    state = s0 & APx : PC;
+    state = s1 & APx : i;
+    state = s2 & APx : PC;
+    TRUE : END_ADDR;
+  esac;
+
+  init(exec_state) := prover;
+  next(exec_state) := case
+    exec_state = terminated : terminated;
+    (trampoline_b <= PC & PC <= trampoline_e) & APx : tcm;
+    exec_state = tcm : {tcm, prover};
+    TRUE : exec_state;
+  esac;
+
+  init(prover_instrumented) := TRUE;
+  next(prover_instrumented) := TRUE;
+
+  init(dma_active) := FALSE;
+  next(dma_active) := {TRUE, FALSE};
+  init(dma_target_select) := target_zero;
+  next(dma_target_select) := {target_zero, target_mmio, target_adm, target_utdm, target_aim};
+
+  init(indirect_ctrl) := FALSE;
+  next(indirect_ctrl) := {TRUE, FALSE};
+
+-- ============================================================================
+-- Invariants
+-- ============================================================================
+INVAR PC = i;
+INVAR (APx -> state != end);
+INVAR ((state = s1 | state = s2) & APx -> PC != END_ADDR);
+INVAR (exec_state = prover -> !(utdm_b <= i & i <= utdm_e));
+INVAR (exec_state = prover & dma_active -> !DMA_APw);
+INVAR (in_prover_interval -> measure_now);
+
+-- ============================================================================
+-- Evidence recording
+-- ============================================================================
+ASSIGN
+  init(ctrl_flow_measured) := FALSE;
+  next(ctrl_flow_measured) := ctrl_event;
+
+  init(mem_write_measured) := FALSE;
+  next(mem_write_measured) := prover_data_write;
+
+  init(mem_read_measured) := FALSE;
+  next(mem_read_measured) := prover_data_read;
+
+  init(measure_now) := FALSE;
+  next(measure_now) := next(ctrl_flow_measured) & next(mem_write_measured) & next(mem_read_measured);
+
+  init(mem_write_count) := 0h32_00000000;
+  next(mem_write_count) := case
+    prover_data_write : mem_write_count + 0h32_00000001;
+    TRUE : mem_write_count;
+  esac;
+
+  init(mem_read_value) := 0h32_00000000;
+  next(mem_read_value) := case
+    prover_data_read : 0h32_00000001;
+    TRUE : mem_read_value;
+  esac;
+
+  init(evidence_sent) := FALSE;
+  next(evidence_sent) := case
+    (mem_k = _MMIO) & (mmio_b <= i & i <= mmio_e) & APw : TRUE;
+    TRUE : evidence_sent;
+  esac;
+  init(sent_through_hook) := FALSE;
+  next(sent_through_hook) := case
+    evidence_sent & (hook_b <= PC & PC <= hook_e) : TRUE;
+    TRUE : sent_through_hook;
+  esac;
+
+-- ============================================================================
+-- Auxiliary predicates
+-- ============================================================================
+DEFINE
+  in_trampoline := (trampoline_b <= PC & PC <= trampoline_e);
+  in_hook_function := (hook_b <= PC & PC <= hook_e);
+  in_tcm_data := (utdm_b <= i & i <= utdm_e);
+  DMA_APw := dma_active & (mem_k = _MMIO) & (mmio_b <= dma_target & dma_target <= mmio_e);
+  dma_target := case
+    dma_target_select = target_mmio : mmio_b;
+    dma_target_select = target_adm  : adm_b;
+    dma_target_select = target_utdm : utdm_b;
+    dma_target_select = target_aim  : aim_b;
+    TRUE : 0h32_00000000;
+  esac;
+
+FAIRNESS TRUE;
+
+-- ============================================================================
+-- LTL Properties: Original from cada_read (isolation, DMA, evidence write)
+-- ============================================================================
+LTLSPEC G(exec_state = prover -> !in_tcm_data);
+LTLSPEC G((exec_state = prover & dma_active) -> !DMA_APw);
+LTLSPEC G((exec_state = prover & (utdm_b <= i & i <= utdm_e)) -> !APw);
+LTLSPEC G(evidence_sent -> sent_through_hook);
+LTLSPEC G((utc_b <= i & i <= utc_e) -> !APw);
+
+-- ============================================================================
+-- LTL Properties: P5 (Novel measurement features)
+-- ============================================================================
+-- F12: Circumvention-resilient (memory write)
+LTLSPEC G(prover_data_write -> X mem_write_measured);
+-- F13: Circumvention-resilient (memory read)
+LTLSPEC G(prover_data_read -> X mem_read_measured);
