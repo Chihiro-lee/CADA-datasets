@@ -2,7 +2,7 @@
 #define LENGTH 10
 char total = 0;
 char user_input[11] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x10,'\r'};
-//char user_input[6] = {0x01,0x02,0x03,0x04,0x05,'\r'};
+//char user_input[6] = {0x01,0x02,0x03,0x04,0x05,'\r'}; /* non-compromised version  */
 void injectMedicinePort1(char* user_input){
   volatile char settings[5] = {1,1,1,1,1}; 
   volatile char local[8] = {2,2,2,2,2,2,2,2};
