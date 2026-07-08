@@ -2,6 +2,13 @@
 > This Markdown page contains details of Formal Verification for CADA. Because zenodo can not compile markdown, for a better experience please download all files from repo and then see this markdown file locally.
 
 
+## Pre requisites
+nuXmv for verify security property of CADA
+
+## nuXmv for verify CADA
+In order to verify CADA, please install nuXmv. To perform nuXmv check of CADA, please use command in cmd.txt file with cada_goto.smv and cada_read.smv.
+
+
 ## Formal Verification for Security Properties
 
 Formal verification of CADA's core security properties P1–P3 and of its measurement features P4 is essential because CADA operates under a threat model in which an adversary can fully compromise the prover program on a resource-constrained MSP430 device. The trustworthiness of remote attestation relies on prover–TCM isolation and the integrity and atomicity of measurement operations. Without these guarantees, a compromised prover could read or modify measurement results or key sets (violating P1), interrupt or tamper with TCM operations (violating P2), or forge evidence without executing genuine measurement code (violating P3). Such violations would let the adversary evade both control-flow and data-flow attestations.
