@@ -10,9 +10,7 @@
 |---|---|
 | `syringePump_OAT_atk` | Syringe-pump program from the OAT test program, ported to MSP430F5529 and the ACFA board. A control-flow attack is injected through a buffer overflow. |
 | `syringePump_ACFA_atk` | Syringe-pump program from the ACFA test program, ported to MSP430F5529. A control-flow attack is injected through a buffer overflow. |
-| `xorCypher_atk` | An application with numerous indirect jumps whose main function is XOR encryption. It is adapted to ACFA and CADA. A control-flow attack is injected through a buffer overflow. |
 | `ACFA_demo_atk` | The attack demo from ACFA, adapted to MSP430F5529. |
-| `stackAtk` | A program with a stack overflow, adapted to ACFA and CADA. A control-flow attack is injected through a buffer overflow. |
 | `TOCTOU_atk1` | TOCTOU attack targeting `8bit2dimMatrix`, ported to ACFA and CADA. |
 | `TOCTOU_atk2` | TOCTOU attack targeting `16bit2dimMatrix`, ported to ACFA and CADA. |
 | `TOCTOU_atk3` | TOCTOU attack targeting `bitcount`, ported to ACFA and CADA. |
